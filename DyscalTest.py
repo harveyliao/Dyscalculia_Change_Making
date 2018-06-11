@@ -36,7 +36,7 @@ while True:
             x.AddListToWallet(New_change)
         else:
             print("you are not getting right change!")
-            diff = New_change - change_comb
+            diff = New_change - change_comb[3]
             if (diff > 0):
                 print("#CHECKPOINT#Return $", diff, "to the cashier")
             if (diff < 0):
