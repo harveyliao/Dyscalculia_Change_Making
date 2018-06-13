@@ -108,8 +108,8 @@ class dyscal:
         Show self.wallet
         :return: print a list, return True
         '''
-        #print information for debug
-        print("Total in wallet:")
+        #print self.wallet in a convenient view
+        print("Wallet status:")
         for i in range(0, 10):
             #print("The amount of " + self.Currency_List[i] + " is: ", self.wallet[i])
             print(self.Currency_List[i]," : ", self.wallet[i])
@@ -125,6 +125,7 @@ class dyscal:
         for i in range(0, 10):
             print("Enter the amount of " + self.Currency_List[i] + ":")
             Input_List[i] = input()
+            #CAUTION: should add a while loop to verify the input is non-negative integer
 
         Input_List = [int(x) for x in Input_List]
         return Input_List
@@ -200,22 +201,22 @@ class dyscal:
             If need to ask for change, the amount you should receive from the cashier is the 4th elemeny
         '''
         origin_bill = bill
-        #first exclude error and lucky case
+        #first find errors and lucky cases
         if bill > self.SumWallet():
-            print("Sorry, you don't have enough money in your wallet")
+            print("Sorry, you don't have enough money in your wallet")  #could be regulate as return code 0
             return [False, False, [0]*10, 0]
         if bill == self.SumWallet():
-            print("Pay all bills and coins in the wallet")
+            print("Pay all bills and coins in the wallet")  #could be regulate as return code 1
             return [True, False, list(self.wallet), 0]
         if bill == self.SumWallet(0, 5):
-            print("Pay all bills in the wallet")
+            print("Pay all bills in the wallet")  #could be regulate as return code 2
             return [True, False, list(self.wallet)[0:5] + ([0]* 5), 0]
         if bill == self.SumWallet(5, 10):
-            print("Pay all coins in the wallet")
+            print("Pay all coins in the wallet")    #could be regulate as return code 3
             return [True, False, ([0]* 5) + list(self.wallet)[5:10], 0]
         #can pay the bill, need to find the combination of bills and coins
         if bill < self.SumWallet():
-            #first assume there is a potential 'perfect combination'
+            #first assume there is a potential 'perfect combination' (exact combination that meets the bill)
             Change_combination = [0] * 10
             for i in range(0, 10):
                 #print("currently at:", i) #test line
@@ -231,7 +232,7 @@ class dyscal:
             if (bill == 0):
                 #there is a 'perfect combination', int() it and return
                 Change_combination = [int(x) for x in Change_combination]
-                print("Pay the combination", Change_combination,"The amount is exact")
+                print("Pay the combination", Change_combination,"The amount is exact")  #could be regulate as return code 4
                 return [True, False, Change_combination, 0]
             if bill > 0:
                 #Add the smallest extra to make sure we can pay the bill
@@ -256,7 +257,8 @@ class dyscal:
                 #print("self.SumList(Change_combination) is:", self.SumList(Change_combination))
                 #print("origin_bill is:", origin_bill)
                 #print("AmountOfChange is:", AmountOfChange)
-                print("Pay the combination", Change_combination, "and ask for $", "{0:.2f}".format(AmountOfChange), "change")
+                print("Pay the combination", Change_combination, "and ask for $", "{0:.2f}".format(AmountOfChange), "change")  #could be regulate as return code 5
+                #CAUTION: return code 5 need furthur action on ensuring get right amount of change back
                 return [True, True, Change_combination, "{0:.2f}".format(AmountOfChange)]
                 '''
                 #maybe doesn't work for some corner cases
