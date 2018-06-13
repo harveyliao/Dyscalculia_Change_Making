@@ -201,7 +201,7 @@ class dyscal:
             If need to ask for change, the amount you should receive from the cashier is the 4th elemeny
         '''
         origin_bill = bill
-        #first find errors and lucky cases
+        #first find errors or lucky cases
         if bill > self.SumWallet():
             print("Sorry, you don't have enough money in your wallet")  #could be regulate as return code 0
             return [False, False, [0]*10, 0]
