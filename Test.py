@@ -1,8 +1,10 @@
 from change_making import *
 
 x = dyscal()
-print("Please setup your wallet")
-x.AskResetWallet()
+#print("Please setup your wallet")
+#x.AskResetWallet()
+print("Set the wallet as 2 for each dominant.")
+x.ResetListWallet([2,2,2,2,2,2,2,2,2,2])
 
 '''
 x.ResetWallet(10,10,10,1,1,\
@@ -36,14 +38,18 @@ while True:
             x.AddListToWallet(New_change)
         else:
             print("you are not getting right change!")
-            diff = New_change - change_comb[3]
+            print("New_change:", New_change, "change_comb[3]:", change_comb[3])
+
+            diff = x.SumList(New_change) - (float)(change_comb[3])
             if (diff > 0):
-                print("#CHECKPOINT#Return $", diff, "to the cashier")
+                print("#CHECKPOINT#Return $", "{0:.2f}".format(diff), "to the cashier")
             if (diff < 0):
-                print("#CHECKPOINT#Ask cashier for $", diff)
+                print("#CHECKPOINT#Ask cashier for $", "{0:.2f}".format(diff))
             #CHECKPOINT#
             #need to verify the newer new_change
     x.ShowWallet()
+
+
 
 '''
 Testing log:
