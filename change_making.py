@@ -9,8 +9,8 @@ class dyscal:
                        0, 0, 0, 0, 0]
         self.value = [100, 50, 20, 10, 5, \
                       2, 1, 0.25, 0.1, 0.05]
-        self.Currency_List = ["$100", "$50", "$20", "$10", "$5", \
-                         "$2", "$1", "¢25", "¢10", "¢5"]
+        self.Currency_List = ["$100", "$50 ", "$20 ", "$10 ", "$5  ", \
+                              "$2  ", "$1  ", "¢25 ", "¢10 ", "¢5  "]
 
     def ResetWallet(self, hundred, fifty, twenty, ten, five, \
                     two, one, quater, tencent, fivecent):
@@ -112,8 +112,25 @@ class dyscal:
         print("Wallet status:")
         for i in range(0, 10):
             #print("The amount of " + self.Currency_List[i] + " is: ", self.wallet[i])
-            print(self.Currency_List[i]," : ", self.wallet[i])
+            print(self.Currency_List[i],":", self.wallet[i])
         return True
+
+    def ShowWalletOCD(self):
+        print("Wallet status:")
+        print("$100:", self.wallet[0])
+        print("$50 :", self.wallet[1])
+        print("$20 :", self.wallet[2])
+        print("$10 :", self.wallet[3])
+        print("$5  :", self.wallet[4])
+        print("$2  :", self.wallet[5])
+        print("$1  :", self.wallet[6])
+        print("¢25 :", self.wallet[7])
+        print("¢10 :", self.wallet[8])
+        print("¢5  :", self.wallet[9])
+        return True
+
+
+
 
     def AskForInput(self):
         '''
@@ -128,7 +145,6 @@ class dyscal:
             #CAUTION: should add a while loop to verify the input is non-negative integer
 
         Input_List = [int(x) for x in Input_List]
-        return Input_List
         '''
         #input confirmation loop, not working currently
         while True:
@@ -141,6 +157,7 @@ class dyscal:
             else:
                 print("Err: Input muust be 'yes' or 'no'")
         '''
+        return Input_List
 
     def AskResetWallet(self):
         '''
@@ -198,22 +215,30 @@ class dyscal:
             1st element is T/F means enough(True) in wallet or not(False)
             2nd element is T/F means need change(True) ot not(False)
             3rd element is the payment combination that the algorithm give
-            If need to ask for change, the amount you should receive from the cashier is the 4th elemeny
+            If need to ask for change, the amount you should receive from the cashier is the 4th element
+            5th element is the return code
+             code: meaning
+                0: not enough
+                1: pay all bills and coins
+                2: pay all bills
+                3: pay all coins
+                4: exact combination as return[2]
+                5: ask for change as return[3], further confirmation needed
         '''
         origin_bill = bill
         #first find errors or lucky cases
         if bill > self.SumWallet():
-            print("Sorry, you don't have enough money in your wallet")  #could be regulate as return code 0
-            return [False, False, [0]*10, 0]
+            print("Sorry, you don't have enough money in your wallet")  #return code 0
+            return [False, False, [0]*10, 0, 0]
         if bill == self.SumWallet():
-            print("Pay all bills and coins in the wallet")  #could be regulate as return code 1
-            return [True, False, list(self.wallet), 0]
+            print("Pay all bills and coins in the wallet")  #return code 1
+            return [True, False, list(self.wallet), 0, 1]
         if bill == self.SumWallet(0, 5):
-            print("Pay all bills in the wallet")  #could be regulate as return code 2
-            return [True, False, list(self.wallet)[0:5] + ([0]* 5), 0]
+            print("Pay all bills in the wallet")  #return code 2
+            return [True, False, list(self.wallet)[0:5] + ([0]* 5), 0, 2]
         if bill == self.SumWallet(5, 10):
-            print("Pay all coins in the wallet")    #could be regulate as return code 3
-            return [True, False, ([0]* 5) + list(self.wallet)[5:10], 0]
+            print("Pay all coins in the wallet")    #return code 3
+            return [True, False, ([0]* 5) + list(self.wallet)[5:10], 0, 3]
         #can pay the bill, need to find the combination of bills and coins
         if bill < self.SumWallet():
             #first assume there is a potential 'perfect combination' (exact combination that meets the bill)
@@ -232,8 +257,8 @@ class dyscal:
             if (bill == 0):
                 #there is a 'perfect combination', int() it and return
                 Change_combination = [int(x) for x in Change_combination]
-                print("Pay the combination", Change_combination,"The amount is exact")  #could be regulate as return code 4
-                return [True, False, Change_combination, 0]
+                print("Pay the combination", Change_combination,"The amount is exact")  #return code 4
+                return [True, False, Change_combination, 0, 4]
             if bill > 0:
                 #Add the smallest extra to make sure we can pay the bill
                 local_wallet = list(self.wallet)  #since the next line doesn't accept function call to 'list()'
@@ -259,13 +284,12 @@ class dyscal:
                 #print("AmountOfChange is:", AmountOfChange)
                 print("Pay the combination", Change_combination, "and ask for $", "{0:.2f}".format(AmountOfChange), "change")  #could be regulate as return code 5
                 #CAUTION: return code 5 need furthur action on ensuring get right amount of change back
-                return [True, True, Change_combination, "{0:.2f}".format(AmountOfChange)]
-                '''
+                return [True, True, Change_combination, "{0:.2f}".format(AmountOfChange), 5]
+
                 #maybe doesn't work for some corner cases
-                for i in range(9, -1, -1):
-                    if (self.value[i] > bill) and dummy_wallet[i]:
-                        print("Ask", self.value[i] - bill, "for change")
-                        Change_combination[i] += 1
-                        break
-                return [ int(x) for x in Change_combination]
-                '''
+                #for i in range(9, -1, -1):
+                #    if (self.value[i] > bill) and dummy_wallet[i]:
+                #        print("Ask", self.value[i] - bill, "for change")
+                #        Change_combination[i] += 1
+                #        break
+                #return [ int(x) for x in Change_combination]

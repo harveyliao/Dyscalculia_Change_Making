@@ -3,8 +3,10 @@ from change_making import *
 x = dyscal()
 #print("Please setup your wallet")
 #x.AskResetWallet()
-print("Set the wallet as 2 for each dominant.")
-x.ResetListWallet([2,2,2,2,2,2,2,2,2,2])
+print("Set the wallet as 1 for each dominant.")
+test_list = [1] * 10
+x.ResetListWallet(test_list)
+x.ShowWallet()
 
 '''
 x.ResetWallet(10,10,10,1,1,\
@@ -16,7 +18,7 @@ print("Total money paid at first:", x.SumList(comb))
 
 
 while True:
-    amount = eval(input("Enter the number on the cashier:"))
+    amount = eval(input("Enter the price on the cashier:"))
     change_comb = x.ChangeMaking(amount)
     '''
     ref self.ChangeMaking()
@@ -24,29 +26,37 @@ while True:
     2nd element is T/F means need change(True) ot not(False)
     3rd element is the payment combination that the algorithm give
     If need to ask for change, the amount you should receive from the cashier is the 4th elemeny
+    5th element is the return code, planned to be used in the next version
+             code: meaning
+                0: not enough
+                1: pay all bills and coins
+                2: pay all bills
+                3: pay all coins
+                4: exact combination as return[2]
+                5: ask for change as return[3], further confirmation needed
     '''
-    print("Total money paid at first:", "{0:.2f}".format(x.SumList(change_comb[2])))
+    print("Total money paid:", "{0:.2f}".format(x.SumList(change_comb[2])))
     if (change_comb[0] == True) and (change_comb[1] == False):
         #Enough money and No change required
+        print("Payment finished! No change required")
         x.SubtractListFromWallet(change_comb[2])
     if (change_comb[0] == True) and (change_comb[1] == True):
         #Enough money and Do require change
         x.SubtractListFromWallet(change_comb[2])
-        print("Please enter the changed money, it should be:$", change_comb[3])
+        print("Please follow the instructions to enter the change, it should be: $" + change_comb[3])
         New_change = x.AskForInput()
-        if New_change == change_comb[3]:
+        if x.SumList(New_change) == (float)(change_comb[3]):
+            print("Payment finished! You get the right change back.")
             x.AddListToWallet(New_change)
         else:
-            print("you are not getting right change!")
-            print("New_change:", New_change, "change_comb[3]:", change_comb[3])
-
+            print("you are not getting right change")
+            #print("New_change:", New_change, "change_comb[3]:", change_comb[3])  #debuging
             diff = x.SumList(New_change) - (float)(change_comb[3])
             if (diff > 0):
-                print("#CHECKPOINT#Return $", "{0:.2f}".format(diff), "to the cashier")
+                print("*NEXT STEP* Return $", "{0:.2f}".format(diff), "to the cashier")
             if (diff < 0):
-                print("#CHECKPOINT#Ask cashier for $", "{0:.2f}".format(diff))
-            #CHECKPOINT#
-            #need to verify the newer new_change
+                print("*NEXT STEP* Ask cashier for $", "{0:.2f}".format(diff))
+            #NEXT STEP: need to verify the newer new_change is right
     x.ShowWallet()
 
 
